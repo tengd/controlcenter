@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.evisible.os.business.dao.TBaseDataMapper" >
+  <resultMap id="BaseResultMap" type="com.evisible.os.business.entity.TBaseData" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="datasource_config_id" property="datasourceConfigId" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+    <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="analysis_time" property="analysisTime" jdbcType="TIMESTAMP" />
+    <result column="push_author" property="pushAuthor" jdbcType="VARCHAR" />
+    <result column="push_time" property="pushTime" jdbcType="TIMESTAMP" />
+    <result column="is_succ" property="isSucc" jdbcType="BIT" />
+    <result column="is_locked" property="isLocked" jdbcType="BIT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.evisible.os.business.entity.TBaseData" extends="BaseResultMap" >
+    <result column="xml_text" property="xmlText" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    uuid, role_id, datasource_config_id, token, table_name, company_code, company_name, 
+    analysis_time, push_author, push_time, is_succ, is_locked
+  </sql>
+  <sql id="Blob_Column_List" >
+    xml_text
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.evisible.os.business.entity.TBaseDataExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_base_data
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.evisible.os.business.entity.TBaseDataExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_base_data
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectBaseDatas" resultMap="BaseResultMap" parameterType="map">
+  select 
+    <include refid="Base_Column_List" />
+     from t_base_data  where 1=1 
+     <if test="cond.datasource_config_id != null and cond.datasource_config_id != ''" >
+     and datasource_config_id = #{cond.datasource_config_id}
+    </if>
+     <if test="cond.is_succ != null" >
+     and is_succ = #{cond.is_succ}
+    </if>
+    <if test="cond.is_locked != null" >
+     and is_locked = #{cond.is_locked}
+    </if>
+    <if test="cond.tableName != null and cond.tableName != ''">
+    and concat(company_code , company_name , table_name) like '%${cond.tableName}%'
+    </if>
+    order by push_time desc 
+    <if test="cond.pageStart ,cond.pageEnd  !=0">
+       limit ${cond.pageStart}, ${cond.pageEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_base_data
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getBaseDataInfoByTriggerUuid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_base_data
+    where uuid IN (select datasource_id from t_trigger_config where uuid = #{triggerUuid,jdbcType=VARCHAR})
+  </select>
+  
+  <select id="selectByPrimaryKeyWithoutBlob" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_base_data
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_base_data
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.evisible.os.business.entity.TBaseDataExample" >
+    delete from t_base_data
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.evisible.os.business.entity.TBaseData" >
+    insert into t_base_data (uuid, token, table_name, 
+      company_code, company_name, analysis_time, 
+      push_author, push_time, is_succ, 
+      xml_text)
+    values (#{uuid,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, #{tableName,jdbcType=VARCHAR}, 
+      #{companyCode,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{analysisTime,jdbcType=TIMESTAMP}, 
+      #{pushAuthor,jdbcType=VARCHAR}, #{pushTime,jdbcType=TIMESTAMP}, #{isSucc,jdbcType=BIGINT}, 
+      #{xmlText,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.evisible.os.business.entity.TBaseData" >
+    insert into t_base_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="tableName != null" >
+        table_name,
+      </if>
+      <if test="companyCode != null" >
+        company_code,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="analysisTime != null" >
+        analysis_time,
+      </if>
+      <if test="pushAuthor != null" >
+        push_author,
+      </if>
+      <if test="pushTime != null" >
+        push_time,
+      </if>
+      <if test="isSucc != null" >
+        is_succ,
+      </if>
+      <if test="xmlText != null" >
+        xml_text,
+      </if>
+      <if test="datasourceConfigId != null" >
+        datasource_config_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="tableName != null" >
+        #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyCode != null" >
+        #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="analysisTime != null" >
+        #{analysisTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pushAuthor != null" >
+        #{pushAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="pushTime != null" >
+        #{pushTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isSucc != null" >
+        #{isSucc,jdbcType=BIGINT},
+      </if>
+      <if test="xmlText != null" >
+        #{xmlText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="datasourceConfigId != null" >
+        #{datasourceConfigId,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.evisible.os.business.entity.TBaseDataExample" resultType="java.lang.Integer" >
+    select count(*) from t_base_data
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_base_data
+    <set >
+      <if test="record.uuid != null" >
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.token != null" >
+        token = #{record.token,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tableName != null" >
+        table_name = #{record.tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyCode != null" >
+        company_code = #{record.companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyName != null" >
+        company_name = #{record.companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.analysisTime != null" >
+        analysis_time = #{record.analysisTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.pushAuthor != null" >
+        push_author = #{record.pushAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pushTime != null" >
+        push_time = #{record.pushTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isSucc != null" >
+        is_succ = #{record.isSucc,jdbcType=BIGINT},
+      </if>
+      <if test="record.xmlText != null" >
+        xml_text = #{record.xmlText,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update t_base_data
+    set uuid = #{record.uuid,jdbcType=VARCHAR},
+      token = #{record.token,jdbcType=VARCHAR},
+      table_name = #{record.tableName,jdbcType=VARCHAR},
+      company_code = #{record.companyCode,jdbcType=VARCHAR},
+      company_name = #{record.companyName,jdbcType=VARCHAR},
+      analysis_time = #{record.analysisTime,jdbcType=TIMESTAMP},
+      push_author = #{record.pushAuthor,jdbcType=VARCHAR},
+      push_time = #{record.pushTime,jdbcType=TIMESTAMP},
+      is_succ = #{record.isSucc,jdbcType=BIGINT},
+      xml_text = #{record.xmlText,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_base_data
+	    set uuid = #{record.uuid,jdbcType=VARCHAR},
+	      token = #{record.token,jdbcType=VARCHAR},
+	      table_name = #{record.tableName,jdbcType=VARCHAR},
+	      company_code = #{record.companyCode,jdbcType=VARCHAR},
+	      company_name = #{record.companyName,jdbcType=VARCHAR},
+	      analysis_time = #{record.analysisTime,jdbcType=TIMESTAMP},
+	      push_author = #{record.pushAuthor,jdbcType=VARCHAR},
+	      push_time = #{record.pushTime,jdbcType=TIMESTAMP},
+	      is_succ = #{record.isSucc,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.evisible.os.business.entity.TBaseData" >
+    update t_base_data
+    <set >
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="tableName != null" >
+        table_name = #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyCode != null" >
+        company_code = #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="analysisTime != null" >
+        analysis_time = #{analysisTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pushAuthor != null" >
+        push_author = #{pushAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="pushTime != null" >
+        push_time = #{pushTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isSucc != null" >
+        is_succ = #{isSucc,jdbcType=BIGINT},
+      </if>
+      <if test="xmlText != null" >
+        xml_text = #{xmlText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isLocked != null" >
+        is_locked = #{isLocked,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.evisible.os.business.entity.TBaseData" >
+    update t_base_data
+    set token = #{token,jdbcType=VARCHAR},
+      table_name = #{tableName,jdbcType=VARCHAR},
+      company_code = #{companyCode,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      analysis_time = #{analysisTime,jdbcType=TIMESTAMP},
+      push_author = #{pushAuthor,jdbcType=VARCHAR},
+      push_time = #{pushTime,jdbcType=TIMESTAMP},
+      is_succ = #{isSucc,jdbcType=BIGINT},
+      xml_text = #{xmlText,jdbcType=LONGVARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.evisible.os.business.entity.TBaseData" >
+    update t_base_data
+    set token = #{token,jdbcType=VARCHAR},
+      table_name = #{tableName,jdbcType=VARCHAR},
+      company_code = #{companyCode,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      analysis_time = #{analysisTime,jdbcType=TIMESTAMP},
+      push_author = #{pushAuthor,jdbcType=VARCHAR},
+      push_time = #{pushTime,jdbcType=TIMESTAMP},
+      is_succ = #{isSucc,jdbcType=BIGINT}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+	
+	<insert id="insertTransferData" parameterType="com.evisible.os.business.entity.TBaseData">
+		insert into t_base_data (uuid , token,  table_name , company_code , company_name , xml_text,
+		push_author , push_time) values (#{uuid}  , #{token} , #{tableName} , #{companyCode} , #{companyName} , 
+		#{xmlText} , #{pushAuthor} ,#{pushTime})
+	</insert>
+	<!-- 寻找指定表名是否在数据库中，以便 -->
+	<select id="findIsTableExists" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*) from information_schema.tables where table_schema =(select database())  and table_name =#{tableName}
+	</select>
+	
+	<!-- 建表 -->
+	<update id="createTableByXmlMap" parameterType="java.util.Map">
+		CREATE TABLE ${tableName} ${tableAttrs} ${tableDescription}
+	</update>
+
+	<!-- 增加表字段 -->
+	<update id="alterTable" parameterType="java.util.Map">
+		ALTER TABLE ${tableName} ${alterType} ${alterDesc}
+	</update>
+	
+	<insert id="insertBatchResolvedBaseData" parameterType="list">
+	insert ignore into ${tableName} ${fieldListStr} values 
+	<foreach collection="values" item="item" index="index" open="" close="" separator=",">
+		${item}
+	</foreach>
+	</insert>
+</mapper>

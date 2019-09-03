@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util/spring-util.xsd">
+  <bean id="userService" class="com.evisible.os.controlcenter.system.service.impl.UserService"></bean>
+  <bean id="userRedis" class="com.evisible.os.controlcenter.system.redis.impl.UserRedisImpl"></bean> 
+  <bean id="sroleService" class="com.evisible.os.controlcenter.system.service.impl.SRoleService"></bean>
+  <bean id="permissionService" class="com.evisible.os.controlcenter.system.service.impl.PermissionService"></bean>
+ <!-- realm -->      
+<bean id="userRealm" class="com.evisible.os.controlcenter.system.shiro.UserRealm">
+	<property name="userService" ref="userService"></property>
+	<property name="userRedis" ref="userRedis"></property>
+	<property name="sroleService" ref="sroleService"></property>
+	<property name="permissionService" ref="permissionService"></property>
+</bean>
+<!-- securityManager 安全管理 -->
+<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
+    <property name="realm" ref="userRealm"/>
+</bean>  
+
+ <!--shiro过滤器配置，bean的id值须与web中的filter-name的值相同--> 
+<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  
+     <property name="securityManager" ref="securityManager" />
+     <!-- 登录时的url -->
+      <property name="loginUrl" value="/view/"/>
+      <!-- 登录成功 -->  
+       <property name="successUrl" value="/view/main"/>  
+       <!-- 配置过滤链 -->
+       <!-- main,system下的jsp有管理员权限才可访问 -->
+       <property name="filterChainDefinitions">
+       		<value>
+       			/caiyunedu/index=anon
+       			<!-- /fun/getFunTree=admin -->
+       			<!-- 验证码 -->
+       			/login/getValidateCodeImage=anon 
+       			/caiyunedu/view/tags=anon
+       			/caiyunedu/view/login=anon
+       			/main**=authc
+       			/caiyunedu/view/system/**=authc,perms[后台管理员:*]
+       		</value>
+       </property>
+</bean>  
+
+<!-- 保证实现了Shiro内部lifecycle函数的bean执行 --> 
+<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>  
+
+
+
+
+<!-- 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证 -->  
+<!-- 配置以下两个bean即可实现此功能 -->  
+<!-- Enable Shiro Annotations for Spring-configured beans. Only run after the lifecycleBeanProcessor has run -->  
+<!-- 由于本例中并未使用Shiro注解,故注释掉这两个bean(个人觉得将权限通过注解的方式硬编码在程序中,查看起来不是很方便,没必要使用) -->  
+<!-- <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>  
+  <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">  
+    <property name="securityManager" ref="securityManager"/>  
+  </bean>   -->
+
+
+</beans>

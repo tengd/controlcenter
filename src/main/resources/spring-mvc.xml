@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.2.xsd
+    http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+	http://www.directwebremoting.org/schema/spring-dwr
+    http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd ">
+  	
+	<!-- 自动扫描如下包,使SpringMVC认为包下用了@controller注释的控制器 -->
+    <context:component-scan base-package="com.evisible.os.controlcenter.system.controller,
+										  com.evisible.os.business.controller,
+										  com.evisible.os.timing.quartz.controller"/>
+    <!-- MVC注释驱动 -->
+    <mvc:annotation-driven/>
+    
+    <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+     <bean id="mappingJacksonHttpMessageConverter"  
+      class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">  
+	    	<property name="supportedMediaTypes"> 
+		    	<list>
+		    		<value>text/html;charset=UTF-8</value>  
+		    	</list> 
+	    	</property>
+    </bean>
+    
+    <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean  
+    	class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">  
+    	 <property name="messageConverters">  
+    	  <list>  
+    	  		 <ref bean="mappingJacksonHttpMessageConverter" /> <!-- JSON转换器 -->  
+    	   </list>  
+    	    </property>  
+    </bean>
+      
+    <!-- 视图模式配置 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/view/"/>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+
+    <!--静态文件访问  -->
+	<mvc:resources mapping="/js/**" location="/js/"/>
+	<mvc:resources mapping="/images/**" location="/images/"/>
+	<mvc:resources mapping="/css/**" location="/css/"/>
+	<mvc:resources mapping="/WEB-INF/view/**" location="/WEB-INF/view/system"/>
+	
+	 <mvc:default-servlet-handler />
+	
+    <!-- DWR识配器 -->
+   <!--  <dwr:annotation-config/>
+    <dwr:url-mapping/>
+    <dwr:controller id="dwrController" debug="true">
+        <dwr:config-param name="allowScriptTagRemoting" value="true"/>
+        <dwr:config-param name="activeReverseAjaxEnabled" value="true"/>
+        <dwr:config-param name="crossDomainSessionSecurity" value="false"/>
+        <dwr:config-param name="pollAndCometEnabled" value="true"/>
+    </dwr:controller> -->
+    
+<!--Controller 方法注解控制器 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="ignoreDefaultModelOnRedirect" value="true"/>
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"
+                      p:supportedMediaTypes="*/*"/>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>application/json;charset=UTF-8</value>
+                            <value>text/javascript;charset=UTF-8</value>
+                            <value>text/html;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+   <!-- RESTful服务,内容协商视图解析器,此处用json -->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="1"/>
+        <property name="contentNegotiationManager">
+            <bean class="org.springframework.web.accept.ContentNegotiationManager">
+                <constructor-arg>
+                    <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+                        <constructor-arg>
+                            <map>
+                                <entry key="json" value="application/json"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+            </list>
+        </property>
+    </bean>
+
+	<!-- 支持上传文件-->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="maxUploadSize" value="10485760000"/>
+        <property name="maxInMemorySize" value="40960"/>
+    </bean> 
+    
+
+</beans>

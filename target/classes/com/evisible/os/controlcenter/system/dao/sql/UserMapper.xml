@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.evisible.os.controlcenter.system.dao.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.evisible.os.controlcenter.system.entity.User" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="s_dic_date_id" property="sDicDateId" jdbcType="VARCHAR" />
+    <result column="u_name" property="uName" jdbcType="VARCHAR" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="pas" property="pas" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="wechar_no" property="wecharNo" jdbcType="VARCHAR" />
+    <result column="qq_no" property="qqNo" jdbcType="VARCHAR" />
+    <result column="sign" property="sign" jdbcType="INTEGER" />
+    <result column="integral" property="integral" jdbcType="REAL" />
+    <result column="integral_s" property="integralS" jdbcType="INTEGER" />
+    <result column="integral_e" property="integralE" jdbcType="INTEGER" />
+    <result column="locked" property="locked" jdbcType="INTEGER" />
+    <result column="createdate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="medal_number" property="medalNumber" jdbcType="INTEGER" />
+    <result column="u_describe" property="uDescribe" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.evisible.os.controlcenter.system.entity.UserWithBLOBs" extends="BaseResultMap" >
+    <result column="headshot" property="headshot" jdbcType="LONGVARBINARY" />
+    <result column="QRcode" property="qrcode" jdbcType="LONGVARBINARY" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    uuid, s_dic_date_id, u_name, account, pas, salt, phone, address, email, wechar_no, 
+    qq_no, sign, integral, integral_s, integral_e, locked, createdate, medal_number, 
+    u_describe
+  </sql>
+  <sql id="Blob_Column_List" >
+    headshot, QRcode
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.evisible.os.controlcenter.system.entity.UserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from u_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.evisible.os.controlcenter.system.entity.UserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from u_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  
+   <!-- 改造selectByExample，加入用户类型,静止自动生成时覆盖 -->
+  <!-- 20160907改造selectByExample，去除用户类型 -->
+   <select id="selectByExampleKZ" parameterType="hashmap" resultMap="BaseResultMap">
+ 	select u.uuid, u.u_name, u.account,u.pas, u.salt, u.phone, u.address, u.email, u.wechar_no, u.qq_no, 
+    u.sign, u.locked, u.createdate
+	from u_user u
+		where 1=1
+		<!-- 正常用户 -->
+		and u.sign=0
+		<!-- 排序 -->
+	<if test="uname != null">
+       and u.u_name like '%${uname}%'
+    </if>
+    	order by u.createdate desc
+      <!--  分页 -->
+    <if test="secondValue!=0">
+       limit ${value}, ${secondValue}
+    </if>
+  </select>
+  
+    <!-- 改造selectByExample，加入用户类型,静止自动生成时覆盖 -->
+     <!-- 20160907改造selectByExample，去除用户类型 -->
+   <select id="getUsersByNotLocked" parameterType="hashmap" resultMap="BaseResultMap">
+	  select u.uuid, u.u_name, u.pas, u.salt, u.phone, u.address, u.email, u.wechar_no, u.qq_no, 
+	    u.sign,  u.locked, u.createdate
+		from u_user u
+			where 1=1
+		<!-- 正常用户且没锁定用户 -->
+		and u.sign=0
+		and u.locked=0
+		<!-- 排序 -->
+	<if test="uname != null">
+       and u.u_name like '%${uname}%'
+    </if>
+    order by u.createdate desc
+      <!--  分页 -->
+    <if test="secondValue!=0">
+       limit ${value}, ${secondValue}
+    </if>
+  </select>
+  <!-- 统计 -->
+  <select id="countUsersByNotLocked" parameterType="hashmap" resultType="java.lang.Integer">
+	  select count(1)
+		from u_user u
+			where 1=1
+		<!-- 正常用户且没锁定用户 -->
+		and u.sign=0
+		and u.locked=0
+		<!-- 排序 -->
+	<if test="uname != null">
+       and u.u_name like '%${uname}%'
+    </if>
+  </select>
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from u_user
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from u_user
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.evisible.os.controlcenter.system.entity.UserExample" >
+    delete from u_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.evisible.os.controlcenter.system.entity.UserWithBLOBs" >
+    insert into u_user (uuid, s_dic_date_id, u_name, 
+      account, pas, salt, 
+      phone, address, email, 
+      wechar_no, qq_no, sign, 
+      integral, integral_s, integral_e, 
+      locked, createdate, medal_number, 
+      u_describe, headshot, QRcode
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{sDicDateId,jdbcType=VARCHAR}, #{uName,jdbcType=VARCHAR}, 
+      #{account,jdbcType=VARCHAR}, #{pas,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{wecharNo,jdbcType=VARCHAR}, #{qqNo,jdbcType=VARCHAR}, #{sign,jdbcType=INTEGER}, 
+      #{integral,jdbcType=REAL}, #{integralS,jdbcType=INTEGER}, #{integralE,jdbcType=INTEGER}, 
+      #{locked,jdbcType=INTEGER}, #{createdate,jdbcType=TIMESTAMP}, #{medalNumber,jdbcType=INTEGER}, 
+      #{uDescribe,jdbcType=VARCHAR}, #{headshot,jdbcType=LONGVARBINARY}, #{qrcode,jdbcType=LONGVARBINARY}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.evisible.os.controlcenter.system.entity.UserWithBLOBs" >
+    insert into u_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="sDicDateId != null" >
+        s_dic_date_id,
+      </if>
+      <if test="uName != null" >
+        u_name,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="pas != null" >
+        pas,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="wecharNo != null" >
+        wechar_no,
+      </if>
+      <if test="qqNo != null" >
+        qq_no,
+      </if>
+      <if test="sign != null" >
+        sign,
+      </if>
+      <if test="integral != null" >
+        integral,
+      </if>
+      <if test="integralS != null" >
+        integral_s,
+      </if>
+      <if test="integralE != null" >
+        integral_e,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+      <if test="createdate != null" >
+        createdate,
+      </if>
+      <if test="medalNumber != null" >
+        medal_number,
+      </if>
+      <if test="uDescribe != null" >
+        u_describe,
+      </if>
+      <if test="headshot != null" >
+        headshot,
+      </if>
+      <if test="qrcode != null" >
+        QRcode,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="sDicDateId != null" >
+        #{sDicDateId,jdbcType=VARCHAR},
+      </if>
+      <if test="uName != null" >
+        #{uName,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pas != null" >
+        #{pas,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="wecharNo != null" >
+        #{wecharNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qqNo != null" >
+        #{qqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sign != null" >
+        #{sign,jdbcType=INTEGER},
+      </if>
+      <if test="integral != null" >
+        #{integral,jdbcType=REAL},
+      </if>
+      <if test="integralS != null" >
+        #{integralS,jdbcType=INTEGER},
+      </if>
+      <if test="integralE != null" >
+        #{integralE,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="medalNumber != null" >
+        #{medalNumber,jdbcType=INTEGER},
+      </if>
+      <if test="uDescribe != null" >
+        #{uDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="headshot != null" >
+        #{headshot,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="qrcode != null" >
+        #{qrcode,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.evisible.os.controlcenter.system.entity.UserExample" resultType="java.lang.Integer" >
+    select count(*) from u_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update u_user
+    <set >
+      <if test="record.uuid != null" >
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sDicDateId != null" >
+        s_dic_date_id = #{record.sDicDateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uName != null" >
+        u_name = #{record.uName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.account != null" >
+        account = #{record.account,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pas != null" >
+        pas = #{record.pas,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salt != null" >
+        salt = #{record.salt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.wecharNo != null" >
+        wechar_no = #{record.wecharNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qqNo != null" >
+        qq_no = #{record.qqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sign != null" >
+        sign = #{record.sign,jdbcType=INTEGER},
+      </if>
+      <if test="record.integral != null" >
+        integral = #{record.integral,jdbcType=REAL},
+      </if>
+      <if test="record.integralS != null" >
+        integral_s = #{record.integralS,jdbcType=INTEGER},
+      </if>
+      <if test="record.integralE != null" >
+        integral_e = #{record.integralE,jdbcType=INTEGER},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=INTEGER},
+      </if>
+      <if test="record.createdate != null" >
+        createdate = #{record.createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.medalNumber != null" >
+        medal_number = #{record.medalNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.uDescribe != null" >
+        u_describe = #{record.uDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="record.headshot != null" >
+        headshot = #{record.headshot,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="record.qrcode != null" >
+        QRcode = #{record.qrcode,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update u_user
+    set uuid = #{record.uuid,jdbcType=VARCHAR},
+      s_dic_date_id = #{record.sDicDateId,jdbcType=VARCHAR},
+      u_name = #{record.uName,jdbcType=VARCHAR},
+      account = #{record.account,jdbcType=VARCHAR},
+      pas = #{record.pas,jdbcType=VARCHAR},
+      salt = #{record.salt,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      wechar_no = #{record.wecharNo,jdbcType=VARCHAR},
+      qq_no = #{record.qqNo,jdbcType=VARCHAR},
+      sign = #{record.sign,jdbcType=INTEGER},
+      integral = #{record.integral,jdbcType=REAL},
+      integral_s = #{record.integralS,jdbcType=INTEGER},
+      integral_e = #{record.integralE,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      createdate = #{record.createdate,jdbcType=TIMESTAMP},
+      medal_number = #{record.medalNumber,jdbcType=INTEGER},
+      u_describe = #{record.uDescribe,jdbcType=VARCHAR},
+      headshot = #{record.headshot,jdbcType=LONGVARBINARY},
+      QRcode = #{record.qrcode,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update u_user
+    set uuid = #{record.uuid,jdbcType=VARCHAR},
+      s_dic_date_id = #{record.sDicDateId,jdbcType=VARCHAR},
+      u_name = #{record.uName,jdbcType=VARCHAR},
+      account = #{record.account,jdbcType=VARCHAR},
+      pas = #{record.pas,jdbcType=VARCHAR},
+      salt = #{record.salt,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      wechar_no = #{record.wecharNo,jdbcType=VARCHAR},
+      qq_no = #{record.qqNo,jdbcType=VARCHAR},
+      sign = #{record.sign,jdbcType=INTEGER},
+      integral = #{record.integral,jdbcType=REAL},
+      integral_s = #{record.integralS,jdbcType=INTEGER},
+      integral_e = #{record.integralE,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      createdate = #{record.createdate,jdbcType=TIMESTAMP},
+      medal_number = #{record.medalNumber,jdbcType=INTEGER},
+      u_describe = #{record.uDescribe,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.evisible.os.controlcenter.system.entity.UserWithBLOBs" >
+    update u_user
+    <set >
+      <if test="sDicDateId != null" >
+        s_dic_date_id = #{sDicDateId,jdbcType=VARCHAR},
+      </if>
+      <if test="uName != null" >
+        u_name = #{uName,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pas != null" >
+        pas = #{pas,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="wecharNo != null" >
+        wechar_no = #{wecharNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qqNo != null" >
+        qq_no = #{qqNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sign != null" >
+        sign = #{sign,jdbcType=INTEGER},
+      </if>
+      <if test="integral != null" >
+        integral = #{integral,jdbcType=REAL},
+      </if>
+      <if test="integralS != null" >
+        integral_s = #{integralS,jdbcType=INTEGER},
+      </if>
+      <if test="integralE != null" >
+        integral_e = #{integralE,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="createdate != null" >
+        createdate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="medalNumber != null" >
+        medal_number = #{medalNumber,jdbcType=INTEGER},
+      </if>
+      <if test="uDescribe != null" >
+        u_describe = #{uDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="headshot != null" >
+        headshot = #{headshot,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="qrcode != null" >
+        QRcode = #{qrcode,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.evisible.os.controlcenter.system.entity.UserWithBLOBs" >
+    update u_user
+    set s_dic_date_id = #{sDicDateId,jdbcType=VARCHAR},
+      u_name = #{uName,jdbcType=VARCHAR},
+      account = #{account,jdbcType=VARCHAR},
+      pas = #{pas,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      wechar_no = #{wecharNo,jdbcType=VARCHAR},
+      qq_no = #{qqNo,jdbcType=VARCHAR},
+      sign = #{sign,jdbcType=INTEGER},
+      integral = #{integral,jdbcType=REAL},
+      integral_s = #{integralS,jdbcType=INTEGER},
+      integral_e = #{integralE,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      createdate = #{createdate,jdbcType=TIMESTAMP},
+      medal_number = #{medalNumber,jdbcType=INTEGER},
+      u_describe = #{uDescribe,jdbcType=VARCHAR},
+      headshot = #{headshot,jdbcType=LONGVARBINARY},
+      QRcode = #{qrcode,jdbcType=LONGVARBINARY}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.evisible.os.controlcenter.system.entity.User" >
+    update u_user
+    set s_dic_date_id = #{sDicDateId,jdbcType=VARCHAR},
+      u_name = #{uName,jdbcType=VARCHAR},
+      account = #{account,jdbcType=VARCHAR},
+      pas = #{pas,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      wechar_no = #{wecharNo,jdbcType=VARCHAR},
+      qq_no = #{qqNo,jdbcType=VARCHAR},
+      sign = #{sign,jdbcType=INTEGER},
+      integral = #{integral,jdbcType=REAL},
+      integral_s = #{integralS,jdbcType=INTEGER},
+      integral_e = #{integralE,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      createdate = #{createdate,jdbcType=TIMESTAMP},
+      medal_number = #{medalNumber,jdbcType=INTEGER},
+      u_describe = #{uDescribe,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+</mapper>

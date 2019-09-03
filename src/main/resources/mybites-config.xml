@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties>
+        <property name="dialect" value="mysql"/>
+        <property name="pageSqlId" value=".*Page$"/>
+    </properties>
+    <settings>
+        <setting name="callSettersOnNulls" value="true"/>
+    </settings>
+    <typeAliases>
+        <!-- 系统级实体 -->
+        <!-- 用户 -->
+        <typeAlias type="com.evisible.os.controlcenter.system.entity.User" alias="User"/>
+        <!-- 字典 -->
+        <typeAlias type="com.evisible.os.controlcenter.system.entity.SDicDate" alias="SDicDate"/>
+
+        <!-- 功能 -->
+        <typeAlias type="com.evisible.os.controlcenter.system.entity.SFun" alias="SFun"/>
+        <!-- 权限 -->
+         <typeAlias type="com.evisible.os.controlcenter.system.entity.SPermission" alias="SPermission"/>
+         <!-- 角色 -->
+         <typeAlias type="com.evisible.os.controlcenter.system.entity.SRole" alias="SRole"/>
+         <!-- 用户角色 -->
+         <typeAlias type="com.evisible.os.controlcenter.system.entity.SUserRole" alias="SUserRole"/>
+         <!-- 用户组织 -->
+         <typeAlias type="com.evisible.os.controlcenter.system.entity.SOrgUser" alias="SOrgUser"/>
+         <!-- 组织 -->
+         <typeAlias type="com.evisible.os.controlcenter.system.entity.SOrg" alias="SOrg"/>
+         <!--日志 -->
+         <typeAlias type="com.evisible.os.controlcenter.system.entity.SysLog" alias="SysLog"/>
+         <!-- 触发配置表 -->
+         <typeAlias type="com.evisible.os.timing.quartz.entity.TTriggerConfig" alias="TTriggerConfig"/>
+          <!-- 开放接口基础数据表 -->
+         <typeAlias type="com.evisible.os.business.entity.TBaseData" alias="TBaseData"/>
+         <!-- 数据源配置表 -->
+         <typeAlias type="com.evisible.os.business.entity.TDataSourceConfig" alias="TDataSourceConfig"/>
+    </typeAliases>
+    <mappers>
+        <!-- 系统-->
+        <mapper resource="com/evisible/os/controlcenter/system/dao/sql/UserMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SDicDateMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SFunMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SPermissionMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SRoleMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SUserRoleMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SOrgUserMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SOrgMapper.xml"/>
+     	<mapper resource="com/evisible/os/controlcenter/system/dao/sql/SysLogMapper.xml"/>
+     	<!-- 配置 -->
+     	<mapper resource="com/evisible/os/timing/quartz/dao/sql/TTriggerConfigMapper.xml"/>
+     	<mapper resource="com/evisible/os/business/dao/sql/TBaseDataMapper.xml"/>
+     	<mapper resource="com/evisible/os/business/dao/sql/TDataSourceConfigMapper.xml"/>
+     	<mapper resource="com/evisible/os/business/dao/sql/TDataBaseTablesMapper.xml"/>
+     	<mapper resource="com/evisible/os/business/dao/sql/TFtpFileMapper.xml"/>
+     	
+     	<!-- xml解析配置 -->
+     	<!-- <mapper resource="com/evisible/os/business/dao/sql/TXmlResolveMapper.xml"/> -->
+    </mappers>
+</configuration>

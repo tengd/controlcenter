@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evisible.os.business.dao.TFtpFileMapper">
+  <resultMap id="BaseResultMap" type="com.evisible.os.business.entity.TFtpFile">
+    <id column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="filename" jdbcType="VARCHAR" property="filename" />
+    <result column="storepath" jdbcType="VARCHAR" property="storepath" />
+    <result column="storedate" jdbcType="TIMESTAMP" property="storedate" />
+    <result column="lock_sign" jdbcType="BIT" property="lockSign" />
+    <result column="resolve_sign" jdbcType="BIT" property="resolveSign" />
+    <result column="datasource_id" jdbcType="VARCHAR" property="datasourceId" />
+    <result column="datasource_name" jdbcType="VARCHAR" property="datasourceName" />
+    <result column="role_id" jdbcType="VARCHAR" property="roleId" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="createdate" jdbcType="TIMESTAMP" property="createdate" />
+    <result column="updator" jdbcType="VARCHAR" property="updator" />
+    <result column="updatedate" jdbcType="DATE" property="updatedate" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    uuid, type, filename, storepath, storedate, lock_sign, resolve_sign, datasource_id, 
+    datasource_name, role_id, creator, createdate, updator, updatedate
+  </sql>
+  <select id="selectByExample" parameterType="com.evisible.os.business.entity.TFtpFileExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_ftpfile
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_ftpfile
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_ftpfile
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.evisible.os.business.entity.TFtpFileExample">
+    delete from t_ftpfile
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <select id="selectFtpFiles" parameterType="map" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from t_ftpfile where 1=1 
+  	 <if test="cond.lock_sign != null and cond.lock_sign != ''">
+     and lock_sign = #{cond.lock_sign}
+    </if>
+     <if test="cond.datasource_id != null and cond.datasource_id != ''">
+     and datasource_id = #{cond.datasource_id}
+    </if>
+    <if test="cond.role_id != null">
+     and role_id = #{cond.role_id}
+    </if>
+    <if test="cond.resolve_sign != null and cond.datasource_id != ''">
+     and resolve_sign = #{cond.resolve_sign}
+    </if>
+    <if test="cond.file_name != null and cond.file_name != ''">
+     and filename like '%${cond.file_name}%'
+    </if>
+    order by storedate desc 
+    <if test="cond.pageStart ,cond.pageEnd  !=0">
+       limit ${cond.pageStart}, ${cond.pageEnd}
+    </if>
+  </select>
+  <insert id="insert" parameterType="com.evisible.os.business.entity.TFtpFile">
+    insert ignore into t_ftpfile (uuid, type, filename, 
+      storepath, storedate, lock_sign, 
+      resolve_sign, datasource_id, datasource_name, 
+      role_id, creator, createdate, 
+      updator, updatedate)
+    values (#{uuid,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{filename,jdbcType=VARCHAR}, 
+      #{storepath,jdbcType=VARCHAR}, #{storedate,jdbcType=TIMESTAMP}, #{lockSign,jdbcType=BIT}, 
+      #{resolveSign,jdbcType=BIT}, #{datasourceId,jdbcType=VARCHAR}, #{datasourceName,jdbcType=VARCHAR}, 
+      #{roleId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP}, 
+      #{updator,jdbcType=VARCHAR}, #{updatedate,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.evisible.os.business.entity.TFtpFile">
+    insert into t_ftpfile
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="filename != null">
+        filename,
+      </if>
+      <if test="storepath != null">
+        storepath,
+      </if>
+      <if test="storedate != null">
+        storedate,
+      </if>
+      <if test="lockSign != null">
+        lock_sign,
+      </if>
+      <if test="resolveSign != null">
+        resolve_sign,
+      </if>
+      <if test="datasourceId != null">
+        datasource_id,
+      </if>
+      <if test="datasourceName != null">
+        datasource_name,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createdate != null">
+        createdate,
+      </if>
+      <if test="updator != null">
+        updator,
+      </if>
+      <if test="updatedate != null">
+        updatedate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="filename != null">
+        #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="storepath != null">
+        #{storepath,jdbcType=VARCHAR},
+      </if>
+      <if test="storedate != null">
+        #{storedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lockSign != null">
+        #{lockSign,jdbcType=BIT},
+      </if>
+      <if test="resolveSign != null">
+        #{resolveSign,jdbcType=BIT},
+      </if>
+      <if test="datasourceId != null">
+        #{datasourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="datasourceName != null">
+        #{datasourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null">
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null">
+        #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedate != null">
+        #{updatedate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.evisible.os.business.entity.TFtpFileExample" resultType="java.lang.Integer">
+    select count(*) from t_ftpfile
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_ftpfile
+    <set>
+      <if test="record.uuid != null">
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filename != null">
+        filename = #{record.filename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.storepath != null">
+        storepath = #{record.storepath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.storedate != null">
+        storedate = #{record.storedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lockSign != null">
+        lock_sign = #{record.lockSign,jdbcType=BIT},
+      </if>
+      <if test="record.resolveSign != null">
+        resolve_sign = #{record.resolveSign,jdbcType=BIT},
+      </if>
+      <if test="record.datasourceId != null">
+        datasource_id = #{record.datasourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datasourceName != null">
+        datasource_name = #{record.datasourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.roleId != null">
+        role_id = #{record.roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.creator != null">
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdate != null">
+        createdate = #{record.createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updator != null">
+        updator = #{record.updator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatedate != null">
+        updatedate = #{record.updatedate,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_ftpfile
+    set uuid = #{record.uuid,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=VARCHAR},
+      filename = #{record.filename,jdbcType=VARCHAR},
+      storepath = #{record.storepath,jdbcType=VARCHAR},
+      storedate = #{record.storedate,jdbcType=TIMESTAMP},
+      lock_sign = #{record.lockSign,jdbcType=BIT},
+      resolve_sign = #{record.resolveSign,jdbcType=BIT},
+      datasource_id = #{record.datasourceId,jdbcType=VARCHAR},
+      datasource_name = #{record.datasourceName,jdbcType=VARCHAR},
+      role_id = #{record.roleId,jdbcType=VARCHAR},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      createdate = #{record.createdate,jdbcType=TIMESTAMP},
+      updator = #{record.updator,jdbcType=VARCHAR},
+      updatedate = #{record.updatedate,jdbcType=DATE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.evisible.os.business.entity.TFtpFile">
+    update t_ftpfile
+    <set>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="filename != null">
+        filename = #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="storepath != null">
+        storepath = #{storepath,jdbcType=VARCHAR},
+      </if>
+      <if test="storedate != null">
+        storedate = #{storedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lockSign != null">
+        lock_sign = #{lockSign,jdbcType=BIT},
+      </if>
+      <if test="resolveSign != null">
+        resolve_sign = #{resolveSign,jdbcType=BIT},
+      </if>
+      <if test="datasourceId != null">
+        datasource_id = #{datasourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="datasourceName != null">
+        datasource_name = #{datasourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null">
+        createdate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null">
+        updator = #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedate != null">
+        updatedate = #{updatedate,jdbcType=DATE},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.evisible.os.business.entity.TFtpFile">
+    update t_ftpfile
+    set type = #{type,jdbcType=VARCHAR},
+      filename = #{filename,jdbcType=VARCHAR},
+      storepath = #{storepath,jdbcType=VARCHAR},
+      storedate = #{storedate,jdbcType=TIMESTAMP},
+      lock_sign = #{lockSign,jdbcType=BIT},
+      resolve_sign = #{resolveSign,jdbcType=BIT},
+      datasource_id = #{datasourceId,jdbcType=VARCHAR},
+      datasource_name = #{datasourceName,jdbcType=VARCHAR},
+      role_id = #{roleId,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      createdate = #{createdate,jdbcType=TIMESTAMP},
+      updator = #{updator,jdbcType=VARCHAR},
+      updatedate = #{updatedate,jdbcType=DATE}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <!-- 寻找指定表名是否在数据库中，以便 -->
+	<select id="findIsTableExists" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*) from information_schema.tables where table_schema =(select database())  and table_name =#{tableName}
+	</select>
+	
+	<!-- 建表 -->
+	<update id="createTableByXmlMap" parameterType="java.util.Map">
+		CREATE TABLE ${tableName} ${tableAttrs} ${tableDescription}
+	</update>
+	
+	<insert id="insertResolvedBaseData" >
+		insert ignore into ${tableName} ${fieldListStr} values ${values}
+	</insert>
+	
+	<insert id="insertBatchResolvedBaseData" parameterType="list">
+	insert ignore into ${tableName} ${fieldListStr} values 
+
+	<foreach collection="values" item="item" index="index" open="" close="" separator=",">
+		${item}
+	</foreach>
+	</insert>
+</mapper>

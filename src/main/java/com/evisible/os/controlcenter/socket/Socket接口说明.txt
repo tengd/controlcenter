@@ -1,0 +1,19 @@
+　Socket(InetAddress address, int port);
+
+　Socket(InetAddress address, int port, boolean stream);
+
+　Socket(String host, int prot);
+
+　Socket(String host, int prot, boolean stream);
+
+　Socket(SocketImpl impl)
+
+　Socket(String host, int port, InetAddress localAddr, int localPort)
+
+　Socket(InetAddress address, int port, InetAddress localAddr, int localPort)
+
+　ServerSocket(int port);
+
+　ServerSocket(int port, int backlog);
+
+　ServerSocket(int port, int backlog, InetAddress bindAddr)

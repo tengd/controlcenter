@@ -1,0 +1,96 @@
+@CHARSET "UTF-8";
+	html,body {
+			margin: 0 auto;
+			font: 12px Arial "微软雅黑";
+			background: #ffffff;
+			width: 1280px;
+			height: 100%;
+		}
+		a{
+			text-decoration: none;
+		}
+		ul{
+			list-style-type: none;
+		}
+		#header{
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 60px;
+			text-align: center;
+			background: #9AF4F4;
+			/* background: url("/net/images/main/logo.png"); */
+		}
+		#box{
+			background: #fff;
+			margin: 0 auto;
+			width: 100%;
+			height: 90%;
+		}
+		#left{
+			float: left;
+			width: 250px;
+			height: 100%;
+			background: #e9f6fe;
+		}
+		#center{
+			float: left;
+			width: 3px;
+			height: 100%;
+		}
+		#arrow{
+			position: absolute;
+			margin: 20 auto;
+			height: 80px;
+			width: 2px;
+			padding-left: 2px;
+			padding-top: 5px;
+			cursor: pointer;
+			font-family: Arial, '微软雅黑';
+			font-size: 12px;
+			color: #ffffff;
+			z-index: 5;
+			background-color: #18afe7;
+		}
+		#right{
+			float: left;
+			height: 100%;
+			width: 1025px;
+			background: #e9f6fe;
+		}
+		#title{
+			height: 28px;
+			width: 100%;
+			line-height: 28px;
+			vertical-align: middle;
+			border-bottom: 1px solid #c5c5c5;
+		}
+		#user{
+			float: left;
+			width: 170px;
+			height: 28px;
+			margin: 0 0 0 10;
+		}
+		#logout{
+			float: left;
+			width: 70px;
+			height: 28px;
+			line-height: 28px;
+			vertical-align: middle;
+		}
+		.name_txt{
+			font: 13px Arial "微软雅黑";
+			color: #18afe7;
+		}
+		.logout_txt{
+			font: 13px Arial "微软雅黑";
+			color: #5cafe7;
+			font-weight: bold;
+		}
+		#tree_box{
+			overflow: auto;
+			height: 95%;
+		}
+		#nav_tree{
+			padding: 0 10 0 10;
+		}

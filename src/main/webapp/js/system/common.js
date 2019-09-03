@@ -1,0 +1,5 @@
+/**
+ * 
+ */
+var currentPage = "";
+var pageParam = "";
