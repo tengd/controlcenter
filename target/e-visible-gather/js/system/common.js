@@ -1,5 +1,0 @@
-/**
- * 
- */
-var currentPage = "";
-var pageParam = "";
